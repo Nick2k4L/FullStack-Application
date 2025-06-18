@@ -2,8 +2,13 @@ const express = require('express');
 const cors = require('cors')
 const path = require('path')
 
+const corsOptions = {
+    origin: 'http://localhost:5173'
+}
+
 const app = express();
-app.use(cors())
+
+app.use(cors(corsOptions))
 
 let message = [
     {id: 1, text: 'Hello World!'},
@@ -13,7 +18,7 @@ let message = [
 
 // here we are saying to get all posts
 app.get('/api', (req, res) => {
-  res.send(message);
+  res.status(200).json(message);
   console.log(req.body);
 })
 

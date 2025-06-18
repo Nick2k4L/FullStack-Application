@@ -13,6 +13,7 @@ function App() {
 
   async function fetchSearched(){
       const response = await fetch(PATH.concat(`/${inputText}`))
+      //const response = await fetch(PATH)
       console.log(`Here is the respone we got from our call ${response.status}`)
       if (response.ok && inputText){
         const msg = await response.json();
