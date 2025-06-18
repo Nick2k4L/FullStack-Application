@@ -2,14 +2,20 @@ import { useState } from 'react'
 const PATH = "http://localhost:8000/api";
 
 import './App.css'
-
+import Counter from './components/Counter';
+import MyButton from './components/MyButton';
+import { useSelector } from 'react-redux';
+import type { RootState } from './state/store';
+import { useDispatch } from 'react-redux';
+import { setString } from './state/slices/stringSlice';
 
 
 function App() {
   //const [count, setCount] = useState(0)
   const [inputText, setInputText] = useState<string>('')
-  const [outputText, setOutputText] = useState<string>('')
-
+  //const [outputText, setOutputText] = useState<string>('')
+  const output = useSelector((state: RootState) => state.string.value)
+  const dispatch = useDispatch()
 
   async function fetchSearched(){
       const response = await fetch(PATH.concat(`/${inputText}`))
@@ -19,7 +25,7 @@ function App() {
         const msg = await response.json();
         const fullMsg = JSON.stringify(msg.text)
         console.log(fullMsg)
-        setOutputText(fullMsg)
+        dispatch(setString(fullMsg))
       }
       else if(response.ok && !inputText){
         const msg = await response.json()
@@ -30,11 +36,11 @@ function App() {
         msg.forEach((item: {id:number, text:string}) => {
           fullMsg += ` ${item.text}\n`
         });
+        dispatch(setString(fullMsg))
 
-        setOutputText(fullMsg)
       }
       else{
-        setOutputText("Failed to recieve a response, check input")
+        dispatch(setString("Failed to recieve a response, check input"))
       }
   }
 
@@ -44,6 +50,10 @@ function App() {
 
   return (
     <>
+
+        <Counter>
+        </Counter>
+
         <input 
           placeholder="Type in a ID number"
           type="text" 
@@ -51,12 +61,13 @@ function App() {
           onChange={(e) => setInputText(e.target.value)}>
         </input>
 
-        <button 
-          onClick={() => fetchSearched()}>
-          click me!
-          
-        </button>    
-        <p>From Backend {outputText} </p>
+
+        <MyButton
+          name="click me!"
+          onClick={() => fetchSearched()}
+        ></MyButton>
+           
+        <p>From Backend {output} </p>
     </>
   )
 }
